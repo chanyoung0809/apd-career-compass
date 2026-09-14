@@ -5,9 +5,9 @@ QA5 `QA_resume_confirm_event`(QA 커리어 나침반)를 참조해 2026-09-14에
 
 ## 배경
 
-- 목적: 1차 프로젝트(2026-09-30 시작 ~ 10-20 발표회)를 앞두고, 레이서 11명의 **희망 진로와 프로젝트 고민**을 파악하기 위한 1:1 상담(1인당 30분) 안내.
+- 목적: 1차 프로젝트(2026-09-30 시작 ~ 10-20 발표회)를 앞두고, 레이서의 **희망 진로와 프로젝트 고민**을 파악하기 위한 1:1 상담 안내.
 - 희망 진로 3분류: **개발자 / PM / 창업** (+ 미확정·복수).
-- 예약: Cal.com 임베드(30분 단일) — `cysong/apd1-one-on-one-01` 확정 적용됨 (2026-09-14).
+- 예약: Cal.com 임베드 — 30분 기본 권장 + 60분 선택 (단일 이벤트 `cysong/apd1-one-on-one-01`에서 레이서가 길이 선택).
 
 ## 데이터 출처 (읽기 전용 원본)
 
@@ -83,5 +83,8 @@ python -c "from PIL import Image; im = Image.open('FILE.png').convert('RGBA'); p
 
 ## 배포
 
-- 미배포 상태. QA처럼 **GitHub 신규 repo + Vercel** 절차 권장 — `README.md` 3-1/6장 참조 (fork 불필요, 이 폴더를 새 repo로 업로드).
-- 배포 시 Vercel Framework Preset은 `Other`, Root Directory 변경 없음.
+- **배포 완료 (2026-09-14): https://apd-career-compass.vercel.app** (Vercel, chanyoung0809s-projects)
+- GitHub 원격: `https://github.com/chanyoung0809/apd-career-compass` — `main` push 시 자동 재배포 (`vercel git connect` 연결됨)
+- 수동 배포: `vercel --prod --yes` (프로젝트 링크됨, 로컬 `.vercel/` 존재)
+- **`.vercelignore`로 내부 문서·도구는 배포 제외** (CLAUDE/PLAN/README/.git*/tools/상담입력) — 공개 URL에서 404. 이 문서들 수정은 사이트에 영향 없음.
+- Framework Preset `Other`, Root Directory 변경 없음 (정적 배포, 빌드 불필요).
