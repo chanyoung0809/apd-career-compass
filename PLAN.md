@@ -41,6 +41,9 @@
 
 ## 수정 이력
 
+- **2026-09-14 7차 (원격 저장소 변경)**
+  - 배포 원격을 `c0song/apd1-1on1-session` → `chanyoung0809/apd-career-compass`로 변경 (QA 원본과 동일 계정 체계)
+  - 기존 c0song 저장소는 운영 기록으로 남김 (삭제는 운영매니저 판단)
 - **2026-09-14 6차 (GitHub push)**
   - 저장소: https://github.com/c0song/apd1-1on1-session (main, 초기 push)
   - `[APD1] 1on1 상담 기록.xlsx`는 레이서 개인정보(지원동기·수료후목표 원문) 포함 → .gitignore로 저장소 제외, 운영 PC 로컬 전용
