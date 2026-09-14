@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧭 APD1 1:1 상담 입력</title>
+<style>
+  :root {
+    --primary: #2bb8ea; --primary-dark: #1b8fc0;
+    --bg: #f4fbff; --card: #ffffff; --line: #cfe3ee;
+    --ink: #17323f; --sub: #5b7484; --warn: #e07a00; --ok: #128a4e;
+    --sky: #a8e6f7; --peri: #c9c8f7; --mint: #a8e6cf;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Segoe UI", "Malgun Gothic", sans-serif; font-size: 14px;
+    word-break: keep-all; overflow-wrap: anywhere;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+
+  /* ── 상단 바: 레이서 탭 메뉴 ───────────────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; align-items: center; gap: 14px;
+    padding: 9px 16px; background: var(--card);
+    border-bottom: 1px solid var(--line); box-shadow: 0 2px 8px rgba(23,50,63,.06);
+  }
+  .brand { font-size: 15px; font-weight: 700; white-space: nowrap; }
+  .brand small { color: var(--sub); font-weight: 400; }
+  #tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  #tabs::-webkit-scrollbar { display: none; }
+  #tabs .tab {
+    padding: 7px 13px; border: 1px solid var(--line); border-radius: 999px;
+    background: #fff; font-size: 12.5px; font-weight: 600; color: var(--sub);
+    white-space: nowrap; cursor: pointer; transition: all .15s ease;
+  }
+  #tabs .tab:hover { border-color: var(--primary); color: var(--primary-dark); }
+  #tabs .tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+  #tabs .tab .n { opacity: .65; margin-right: 3px; font-size: 11px; }
+  .spacer { flex: 1; }
+  #hint { color: var(--sub); font-size: 12px; white-space: nowrap; }
+
+  #error {
+    display: none; margin: 14px auto 0; max-width: 880px;
+    padding: 12px 16px; border-radius: 10px; background: #fdecec;
+    border: 1px solid #f2b8b5; color: #b3261e; font-weight: 600;
+  }
+
+  /* ── 본문 ───────────────────────────────── */
+  main { max-width: 880px; margin: 0 auto; padding: 22px 84px 140px 20px; }
+  .intro {
+    background: linear-gradient(135deg, #e8f7fe, #f2fbff);
+    border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; margin-bottom: 20px;
+  }
+  .intro h1 { margin: 0 0 6px; font-size: 19px; }
+  .intro p { margin: 0; color: var(--sub); font-size: 13px; }
+
+  section.racer {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 18px 20px 20px; margin-bottom: 26px;
+    scroll-margin-top: 76px;
+  }
+  .racer-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .numchip {
+    width: 42px; height: 42px; border-radius: 12px; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--primary); color: #fff; font-weight: 800; font-size: 16px;
+  }
+  .racer-head h2 { margin: 0; font-size: 18px; }
+  .pill {
+    padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    background: #eef6fb; color: var(--sub); border: 1px solid var(--line);
+  }
+  .pill.dev { background: var(--sky); color: #0b5c7d; border-color: transparent; }
+  .pill.pm  { background: var(--peri); color: #3f3d7a; border-color: transparent; }
+  .pill.startup { background: var(--mint); color: #14563c; border-color: transparent; }
+
+  .block {
+    border-left: 4px solid var(--sky); background: #fbfeff;
+    border-radius: 10px; padding: 14px 16px; margin: 12px 0;
+    scroll-margin-top: 76px;
+  }
+  .block.qa { border-left-color: var(--peri); }
+  .block.record { border-left-color: var(--mint); }
+  .block.info { border-left-color: var(--line); background: #fafcfd; }
+  .block h3 { margin: 0 0 10px; font-size: 14px; }
+  .block h3 small { color: var(--sub); font-weight: 400; }
+  .row { display: grid; grid-template-columns: 150px 1fr; gap: 10px; align-items: center; margin: 8px 0; }
+  .row.top { align-items: start; }
+  .row > label { font-size: 12.5px; font-weight: 700; color: var(--sub); }
+  .row .static { padding: 7px 10px; background: #fff; border: 1px dashed var(--line); border-radius: 8px; color: var(--sub); }
+  input[type="text"], input[type="date"], select, textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: 8px; background: #fff; outline: none;
+  }
+  textarea { resize: vertical; min-height: 38px; line-height: 1.5; }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary); box-shadow: 0 0 0 3px rgba(43,184,234,.18);
+  }
+  .qa-pair { border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 8px; }
+  .qa-pair:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
+  .qa-tag {
+    display: inline-block; margin-bottom: 6px; padding: 2px 8px; border-radius: 999px;
+    background: var(--peri); color: #3f3d7a; font-size: 11.5px; font-weight: 700;
+  }
+  details.info-box { margin: 6px 0 0; }
+  details.info-box summary {
+    cursor: pointer; font-size: 13px; font-weight: 700; color: var(--primary-dark);
+    padding: 6px 2px; user-select: none;
+  }
+  .kv { display: grid; grid-template-columns: 150px 1fr; gap: 6px 10px; font-size: 13px; margin: 8px 0; }
+  .kv dt { font-weight: 700; color: var(--sub); }
+  .kv dd { margin: 0; white-space: pre-wrap; }
+  .guide-list { margin: 8px 0 0; padding-left: 20px; font-size: 13px; line-height: 1.8; }
+  .guide-list li::marker { color: var(--primary); }
+  a.tplink { color: var(--primary-dark); }
+
+  /* ── 오른쪽 레일: 현재 레이서의 항목별 이동 ── */
+  #rail {
+    position: fixed; right: 14px; top: 50%; transform: translateY(-50%);
+    z-index: 15; display: flex; flex-direction: column; gap: 8px; align-items: center;
+  }
+  #railLabel {
+    width: 64px; text-align: center; font-size: 11px; font-weight: 700; color: var(--sub);
+    background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 5px 4px;
+    line-height: 1.35;
+  }
+  #rail .rchip {
+    width: 64px; padding: 7px 4px; border-radius: 999px;
+    background: #fff; border: 1.5px solid var(--line);
+    font-size: 12px; font-weight: 700; color: var(--sub); cursor: pointer;
+    transition: all .15s ease; text-align: center;
+  }
+  #rail .rchip:hover { border-color: var(--primary); color: var(--primary-dark); }
+  #rail .rchip.active { background: var(--primary); border-color: var(--primary); color: #fff; transform: scale(1.06); }
+
+  /* ── floating 저장 버튼 ─────────────────── */
+  #saveFab {
+    position: fixed; right: 26px; bottom: 26px; z-index: 40;
+    padding: 14px 22px; border: 0; border-radius: 999px; cursor: pointer;
+    background: var(--primary); color: #fff; font-weight: 700; font-size: 14.5px;
+    box-shadow: 0 6px 20px rgba(27,143,192,.35);
+    transition: all .15s ease;
+  }
+  #saveFab:hover { background: var(--primary-dark); transform: translateY(-2px); }
+  #saveFab.dirty { background: var(--warn); box-shadow: 0 6px 20px rgba(224,122,0,.35); animation: pulse 1.6s ease-in-out infinite; }
+  #saveFab.ok { background: var(--ok); box-shadow: 0 6px 20px rgba(18,138,78,.35); }
+  #saveFab:disabled { opacity: .7; cursor: default; animation: none; }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+  /* ── 토스트 ─────────────────────────────── */
+  #toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: #fff; padding: 11px 20px; border-radius: 999px;
+    font-size: 13.5px; font-weight: 600; opacity: 0; pointer-events: none;
+    transition: all .25s ease; z-index: 30; max-width: 70vw;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.err { background: #b3261e; }
+
+  @media (max-width: 920px) {
+    #rail, #hint { display: none; }
+    main { padding-right: 20px; padding-bottom: 110px; }
+    .row, .kv { grid-template-columns: 1fr; }
+    .row > label { margin-bottom: -2px; }
+    #saveFab { right: 16px; bottom: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">🧭 APD1 1:1 상담 입력</div>
+  <nav id="tabs"></nav>
+  <div class="spacer"></div>
+  <span id="hint">저장은 우측 하단 💾</span>
+</header>
+<div id="error"></div>
+
+<main>
+  <div class="intro">
+    <h1>상담 중 이 화면에 기록하고 <u>우측 하단 💾 저장</u>만 누르면 돼요</h1>
+    <p>입력한 내용은 <b>[APD1] 1on1 상담 기록.xlsx</b>의 개인별 시트와 '상담 로그' 시트에 함께 저장됩니다.
+       <b>상단 탭</b>으로 레이서 이동, <b>오른쪽 버튼</b>으로 그 레이서의 항목(표지·질문·답·기록) 간 이동이 가능해요.
+       저장 전에는 엑셀 파일을 닫아 두세요.</p>
+  </div>
+  <div id="app">불러오는 중…</div>
+</main>
+
+<nav id="rail">
+  <div id="railLabel">—</div>
+</nav>
+<button id="saveFab"><span id="fabText">💾 엑셀에 저장</span></button>
+<div id="toast"></div>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const groupOf = (pre) => String(pre).startsWith("개발자") ? "dev"
+  : String(pre).startsWith("PM") ? "pm" : String(pre).startsWith("창업") ? "startup" : "unsure";
+const QA = [
+  { q: "질문 1 (끌리는 진로)",     ph: "예) 개발자 / PM·기획 / 창업 중 지금 더 끌리는 쪽 + 이유" },
+  { q: "답 1",                    ph: "예) 개발자 — 직접 만들어 보는 게 재미있어서요" },
+  { q: "질문 2 (가장 큰 걱정)",    ph: "예) React가 안 익어서 개발 파트가 무서워요" },
+  { q: "답 2",                    ph: "레이서가 보낸 답" },
+  { q: "질문 3 (꼭 물어볼 질문)",  ph: "예) 비전공자 취업은 어느 시점에 지원하는 게 좋나요?" },
+  { q: "답 3",                    ph: "레이서가 보낸 답" },
+];
+const RECORD = [
+  { label: "상담 내용",  rows: 6, ph: "타임라인·논의 포인트를 자유롭게…" },
+  { label: "고민 키워드", rows: 1, ph: "예) 포트폴리오, 취업 시점, 프로젝트 역할" },
+  { label: "액션 아이템", rows: 3, ph: "예) 9/28까지 PRD 초안 1장 만들기" },
+  { label: "후속 조치",  rows: 2, ph: "예) 커리큘럼 자료 공유 (운영 측)" },
+];
+const BLOCKS = [
+  { key: "cover",  label: "표지" },
+  { key: "qa",     label: "질문·답" },
+  { key: "record", label: "상담 기록" },
+  { key: "info",   label: "배경·가이드" },
+];
+let racers = [], dirty = false, activeRacer = null, toastTimer = null, fabResetTimer = null;
+
+function toast(msg, err = false) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.className = "show" + (err ? " err" : "");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = "", 2600);
+}
+function setFab(mode, text) {
+  const fab = $("#saveFab");
+  fab.className = mode || "";
+  $("#fabText").textContent = text;
+}
+function markDirty() {
+  dirty = true;
+  clearTimeout(fabResetTimer);
+  setFab("dirty", "● 변경됨 · 💾 저장");
+}
+
+function fieldInput(sheet, label, tag, attrs = {}) {
+  const attr = `data-sheet="${sheet}" data-label="${esc(label)}"`;
+  if (tag === "textarea") return `<textarea ${attr} ${Object.entries(attrs).map(([k,v])=>`${k}="${v}"`).join(" ")} placeholder="${esc(attrs.ph||"")}"></textarea>`;
+  if (tag === "select") {
+    const opts = attrs.options.map(o => `<option value="${esc(o.v)}">${esc(o.t)}</option>`).join("");
+    return `<select ${attr}>${opts}</select>`;
+  }
+  return `<input type="${attrs.type||"text"}" ${attr} placeholder="${esc(attrs.ph||"")}">`;
+}
+
+function render(data) {
+  racers = data.racers;
+
+  // 상단 레이서 탭 메뉴
+  $("#tabs").innerHTML = racers.map(r =>
+    `<button class="tab" data-no="${r.no}"><span class="n">${r.no}</span>${esc(r.name)}</button>`).join("");
+
+  // 레이서 섹션
+  $("#app").innerHTML = racers.map(r => {
+    const g = groupOf(r.pre);
+    const pill = g === "unsure" ? `<span class="pill">진로 미확정·복수</span>` : `<span class="pill ${g}">${r.pre.split(" (")[0]}</span>`;
+    const f = r.fields;
+    const qaHtml = [0,2,4].map(i => {
+      const [q, a] = [QA[i], QA[i+1]];
+      return `<div class="qa-pair"><span class="qa-tag">${esc(q.q.split(" ")[1] + " · " + q.q.split(" ")[2].replace(/[()]/g,""))}</span>
+        <div class="row top"><label>${esc(q.q)}</label>${fieldInput(r.sheet, q.q, "input", {ph: q.ph})}</div>
+        <div class="row top"><label>${esc(a.q)}</label>${fieldInput(r.sheet, a.q, "textarea", {rows: 2, ph: a.ph})}</div></div>`;
+    }).join("");
+    const recHtml = RECORD.map(x =>
+      `<div class="row top"><label>${esc(x.label)}</label>${fieldInput(r.sheet, x.label, x.rows > 1 ? "textarea" : "input", {rows: x.rows, ph: x.ph})}</div>`).join("");
+    const infoHtml = Object.entries(r.info).map(([k, v]) =>
+      `<dt>${esc(k)}</dt><dd>${esc(v) || "—"}</dd>`).join("");
+    const guideHtml = r.guide.map(g2 => `<li>${esc(g2)}</li>`).join("");
+    const tp = r.typePage ? `<dt>맞춤 유형 페이지</dt><dd><a class="tplink" href="${esc(r.typePage.url||"#")}" target="_blank" rel="noopener">${esc(r.typePage.text)}</a></dd>` : "";
+    return `
+    <section class="racer" id="r${r.no}" data-no="${r.no}" data-sheet="${esc(r.sheet)}">
+      <div class="racer-head">
+        <div class="numchip">${r.no}</div>
+        <h2>${esc(r.name)}</h2>
+        ${pill}
+        <span class="pill">${esc(String(f["상담 시간"] || "시간 미정"))}</span>
+      </div>
+
+      <div class="block cover" id="r${r.no}-cover" data-racer="${r.no}" data-block="cover">
+        <h3>A. 표지 <small>· 상담 확정 정보</small></h3>
+        <div class="row"><label>상담 일시</label>${fieldInput(r.sheet, "상담 일시", "input", {type: "date"})}</div>
+        <div class="row"><label>상담 시간</label>${fieldInput(r.sheet, "상담 시간", "select", {options: [{v:"",t:"선택…"},{v:"30분",t:"30분 (기본)"},{v:"60분",t:"60분 (할 말이 많을 때)"}]})}</div>
+        <div class="row"><label>희망 진로 (확정)</label>${fieldInput(r.sheet, "희망 진로 (상담 확정)", "select", {options: [{v:"",t:"선택…"},{v:"개발자",t:"개발자"},{v:"PM",t:"PM"},{v:"창업",t:"창업"},{v:"미확정",t:"미확정"}]})}</div>
+        <div class="row top"><label>한 줄 요약</label>${fieldInput(r.sheet, "한 줄 요약", "input", {ph: "상담을 한 문장으로…"})}</div>
+        <div class="row"><label>사전 추정</label><div class="static">${esc(r.pre)}</div></div>
+      </div>
+
+      <div class="block qa" id="r${r.no}-qa" data-racer="${r.no}" data-block="qa">
+        <h3>상담 전 질문·답 <small>· 레이서가 보낸 3줄 메모 (상담 전 받아 입력)</small></h3>
+        ${qaHtml}
+      </div>
+
+      <div class="block record" id="r${r.no}-record" data-racer="${r.no}" data-block="record">
+        <h3>상담 중 기록 <small>· 상담하면서 바로 적기</small></h3>
+        ${recHtml}
+      </div>
+
+      <div class="block info" id="r${r.no}-info" data-racer="${r.no}" data-block="info">
+        <details class="info-box"><summary>📁 레이서 배경 · 지원동기 원문 (펼치기)</summary>
+          <dl class="kv">${tp}${infoHtml}</dl>
+        </details>
+        <details class="info-box"><summary>☑️ 진로별 질문 가이드 (펼치기)</summary>
+          <ul class="guide-list">${guideHtml}</ul>
+        </details>
+      </div>
+    </section>`;
+  }).join("");
+
+  // 기존 저장값 채우기
+  racers.forEach(r => {
+    for (const [label, val] of Object.entries(r.fields)) {
+      const el = document.querySelector(`[data-sheet="${r.sheet}"][data-label="${label}"]`);
+      if (!el) continue;
+      if (el.tagName === "SELECT") {
+        if (val) el.value = val;
+      } else if (el.type === "date") {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(val)) el.value = val;
+      } else {
+        el.value = val;
+      }
+    }
+  });
+}
+
+function collect() {
+  const updates = {};
+  document.querySelectorAll("[data-sheet][data-label]").forEach(el => {
+    const sheet = el.dataset.sheet, label = el.dataset.label;
+    if (el.tagName === "SELECT" && !el.value) return;   // 미선택은 엑셀 건드리지 않음
+    (updates[sheet] ||= {})[label] = el.value;
+  });
+  return updates;
+}
+
+async function save() {
+  if (!racers.length) return;
+  $("#saveFab").disabled = true;
+  setFab("", "저장 중…");
+  try {
+    const res = await fetch("/api/save", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({updates: collect()}),
+    });
+    const out = await res.json();
+    if (res.ok && out.ok) {
+      dirty = false;
+      const t = new Date().toTimeString().slice(0, 5);
+      setFab("ok", `✓ 저장됨 ${t}`);
+      toast(`💾 엑셀에 저장했어요 · ${out.changed.length}개 시트 · ${t}`);
+      clearTimeout(fabResetTimer);
+      fabResetTimer = setTimeout(() => { if (!dirty) setFab("", "💾 엑셀에 저장"); }, 4000);
+    } else {
+      showError(out.error || "저장 실패");
+      setFab("dirty", "⚠️ 저장 실패");
+      toast("저장 실패 — 위 안내를 확인하세요", true);
+    }
+  } catch (e) {
+    showError("서버에 연결할 수 없어요. 상담입력 시작.bat / python tools/상담_서버.py 로 서버를 실행했는지 확인하세요.");
+    setFab("dirty", "⚠️ 연결 실패");
+    toast("서버 연결 실패", true);
+  }
+  $("#saveFab").disabled = false;
+}
+
+function showError(msg) {
+  const el = $("#error");
+  el.style.display = "block";
+  el.textContent = "⚠️ " + msg;
+}
+
+document.addEventListener("input", markDirty);
+document.addEventListener("change", markDirty);
+$("#saveFab").addEventListener("click", save);
+
+// 상단 탭: 레이서 이동
+$("#tabs").addEventListener("click", (e) => {
+  const tab = e.target.closest(".tab");
+  if (tab) document.getElementById("r" + tab.dataset.no)?.scrollIntoView({behavior: "smooth", block: "start"});
+});
+
+// 오른쪽 레일: 현재 레이서의 항목별 이동
+$("#rail").addEventListener("click", (e) => {
+  const chip = e.target.closest(".rchip");
+  if (!chip || activeRacer === null) return;
+  document.getElementById(`r${activeRacer}-${chip.dataset.block}`)?.scrollIntoView({behavior: "smooth", block: "start"});
+});
+
+window.addEventListener("beforeunload", (e) => {
+  if (dirty) { e.preventDefault(); e.returnValue = ""; }
+});
+
+// 스크롤 스파이 — 현재 레이서(상단 탭 + 레일 라벨 갱신)
+const sectionSpy = new IntersectionObserver((entries) => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    activeRacer = +en.target.dataset.no;
+    const r = racers.find(x => x.no === activeRacer);
+    $("#railLabel").innerHTML = r ? `${r.no}<br>${esc(r.name)}` : "—";
+    document.querySelectorAll("#tabs .tab").forEach(t =>
+      t.classList.toggle("active", +t.dataset.no === activeRacer));
+    document.querySelectorAll("#rail .rchip").forEach(c =>
+      c.classList.toggle("active", c.dataset.block === "cover"));
+  });
+}, {rootMargin: "-40% 0px -55% 0px"});
+
+// 스크롤 스파이 — 현재 항목(레일 하이라이트)
+const blockSpy = new IntersectionObserver((entries) => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    if (+en.target.dataset.racer !== activeRacer) return;
+    const key = en.target.dataset.block;
+    document.querySelectorAll("#rail .rchip").forEach(c =>
+      c.classList.toggle("active", c.dataset.block === key));
+  });
+}, {rootMargin: "-25% 0px -65% 0px"});
+
+function observe() {
+  document.querySelectorAll("section.racer").forEach(s => sectionSpy.observe(s));
+  document.querySelectorAll(".block").forEach(b => blockSpy.observe(b));
+}
+
+// file:// 로 직접 열었을 때 안내
+if (location.protocol === "file:") {
+  showError("이 페이지는 로컬 서버가 필요해요. 폴더 안의 <b>상담입력 시작.bat</b> 을 실행(또는 python tools/상담_서버.py)하면 자동으로 열립니다.");
+}
+
+(async () => {
+  try {
+    const res = await fetch("/api/data");
+    const data = await res.json();
+    if (!res.ok) { showError(data.error || "데이터 로드 실패"); return; }
+    render(data);
+    observe();
+  } catch (e) {
+    $("#app").textContent = "";
+    showError("데이터를 불러올 수 없어요. 상담입력 시작.bat 로 서버를 실행한 뒤 다시 열어 주세요.");
+  }
+})();
+</script>
+</body>
+</html>

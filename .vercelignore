@@ -1,0 +1,9 @@
+# 공개 사이트 배포에서 내부 문서·도구 제외 (레이서 이름·개인 데이터 포함 문서 포함)
+CLAUDE.md
+PLAN.md
+README.md
+.gitignore
+.gitattributes
+상담입력.html
+상담입력 시작.bat
+tools/

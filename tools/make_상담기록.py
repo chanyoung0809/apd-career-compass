@@ -108,8 +108,8 @@ SECONDARY_GUIDE = {
         "[창업 지향 참고] 아이템 한 문장 정의(4칸) + 1차 프로젝트에 검증 가설 1개 녹이기",
     ],
     "황지혜": [
-        "[PM 지향 참고] 애매한 표현을 구체 명세로 바꾸는 번역 연습 3개",
         "[개발 지향 참고] 맡고 싶은 파트(프론트/백엔드) 미리 정해 오기",
+        "[PM 지향 이유] '취업한다면 PM쪽 생각하고 있습니당' (Discord 9/2 원문)",
     ],
 }
 
@@ -149,7 +149,12 @@ PRE_ESTIMATE = {
     "정우현": "개발자 (AI 서비스 개발 취업)",
     "최은비": "창업 (1인 MVP, PM 병행)",
     "홍태휘": "미확정 (취업 목표)",
-    "황지혜": "미확정·복수 (개발·PM 모두 흥미)",
+    "황지혜": "미확정·복수 (개발·PM 모두 흥미) — 취업 시 PM 지향 (Discord 9/2)",
+}
+
+# 사전 추정 문자열과 달리 질문 가이드를 별도 그룹으로 뽑아줄 레이서 (group_of 최우선 적용)
+GROUP_OVERRIDE = {
+    "황지혜": "pm",  # 취업 경로가 PM 지향(Discord 9/2)이라 PM 가이드를 주로 사용 + 개발 참고 보조
 }
 
 HEAD_FILL = PatternFill("solid", fgColor="2BB8EA")
@@ -212,6 +217,8 @@ def current_status(r):
 
 
 def group_of(name):
+    if name in GROUP_OVERRIDE:
+        return GROUP_OVERRIDE[name]
     e = PRE_ESTIMATE.get(name, "")
     if e.startswith("개발자"):
         return "dev"
@@ -278,6 +285,7 @@ def build_individual_sheet(wb, r, i):
     sec("A. 표지")
     item("이름", name)
     item("상담 일시", None)
+    item("상담 시간", None)
     item("희망 진로 (사전 추정)", PRE_ESTIMATE.get(name, "—"))
     item("희망 진로 (상담 확정)", None)
     item("맞춤 유형 페이지", f"{page_text} — {SITE_REPO_URL}/{page_file}",
@@ -302,14 +310,23 @@ def build_individual_sheet(wb, r, i):
     item("지원동기 (원문)", r["지원동기"], height=90)
     item("수료후목표 (원문)", r["수료후목표"], height=90)
 
-    sec("E. 진로별 체크리스트·질문 가이드",
+    sec("E. 상담 전 질문·답 (레이서가 보낸 3줄 메모)",
+        note="prep_guide에서 안내한 3질문 기준. 레이서가 보낸 질문·답을 상담 전에 받아 기입 (다르게 보내면 받은 대로).")
+    item("질문 1 (끌리는 진로)", None, height=30)
+    item("답 1", None, height=70)
+    item("질문 2 (가장 큰 걱정)", None, height=30)
+    item("답 2", None, height=70)
+    item("질문 3 (꼭 물어볼 질문)", None, height=30)
+    item("답 3", None, height=70)
+
+    sec("F. 진로별 체크리스트·질문 가이드",
         note="상담에서 다루고 싶은 항목을 골라 옆 칸에 메모. 정리가 끝난 항목에는 ☑ 표기.")
     for gi, g in enumerate(CAREER_GUIDE[group], start=1):
         item(f"☐ {gi}", g)
     for s in SECONDARY_GUIDE.get(name, []):
         item("☐ +", s)
 
-    sec("F. 상담 중 기록 (상담 중 직접 기입)")
+    sec("G. 상담 중 기록 (상담 중 직접 기입)")
     item("상담 내용", None, height=100)
     item("고민 키워드", None, height=28)
     item("액션 아이템", None, height=70)
@@ -328,16 +345,16 @@ def build_log_sheet(wb, racers):
     headers = [
         "연번", "이름", "희망 진로\n(사전 추정)", "희망 진로\n(상담 확정)",
         "현재 상황", "전공", "수강목적", "핵심 목표 (수료후)",
-        "상담 일시", "상담 내용", "고민 키워드", "액션 아이템", "후속 조치",
+        "상담 일시", "상담 시간", "상담 내용", "고민 키워드", "액션 아이템", "후속 조치",
     ]
     ws.append(headers)
     for i, r in enumerate(racers, start=1):
         ws.append([
             i, r["이름"], PRE_ESTIMATE.get(r["이름"], "—"), None,
             current_status(r), r["전공"], r["수강목적"], CORE_GOAL.get(r["이름"], "—"),
-            None, None, None, None, None,
+            None, None, None, None, None, None,
         ])
-    style_sheet(ws, [5, 9, 20, 14, 16, 12, 12, 30, 12, 36, 16, 30, 16])
+    style_sheet(ws, [5, 9, 20, 14, 16, 12, 12, 30, 12, 10, 36, 16, 30, 16])
     for idx in range(2, len(racers) + 2):
         ws.row_dimensions[idx].height = 54
     note = ws.cell(row=len(racers) + 3, column=2,
