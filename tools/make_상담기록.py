@@ -285,7 +285,8 @@ def build_individual_sheet(wb, r, i):
     sec("A. 표지")
     item("이름", name)
     item("상담 일시", None)
-    item("상담 시간", None)
+    item("시작 시간", None)
+    item("소요 시간", None)
     item("희망 진로 (사전 추정)", PRE_ESTIMATE.get(name, "—"))
     item("희망 진로 (상담 확정)", None)
     item("맞춤 유형 페이지", f"{page_text} — {SITE_REPO_URL}/{page_file}",
@@ -345,16 +346,16 @@ def build_log_sheet(wb, racers):
     headers = [
         "연번", "이름", "희망 진로\n(사전 추정)", "희망 진로\n(상담 확정)",
         "현재 상황", "전공", "수강목적", "핵심 목표 (수료후)",
-        "상담 일시", "상담 시간", "상담 내용", "고민 키워드", "액션 아이템", "후속 조치",
+        "상담 일시", "시작 시간", "소요 시간", "상담 내용", "고민 키워드", "액션 아이템", "후속 조치",
     ]
     ws.append(headers)
     for i, r in enumerate(racers, start=1):
         ws.append([
             i, r["이름"], PRE_ESTIMATE.get(r["이름"], "—"), None,
             current_status(r), r["전공"], r["수강목적"], CORE_GOAL.get(r["이름"], "—"),
-            None, None, None, None, None, None,
+            None, None, None, None, None, None, None,
         ])
-    style_sheet(ws, [5, 9, 20, 14, 16, 12, 12, 30, 12, 10, 36, 16, 30, 16])
+    style_sheet(ws, [5, 9, 20, 14, 16, 12, 12, 30, 12, 9, 10, 36, 16, 30, 16])
     for idx in range(2, len(racers) + 2):
         ws.row_dimensions[idx].height = 54
     note = ws.cell(row=len(racers) + 3, column=2,

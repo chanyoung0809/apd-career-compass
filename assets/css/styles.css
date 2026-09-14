@@ -686,18 +686,6 @@ li strong {
     margin-bottom: 0;
 }
 
-.booking-about-callout .callout-emphasis {
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px dashed rgba(43, 184, 234, 0.4);
-    text-align: center;
-    font-size: 1rem;
-}
-
-.booking-about-callout .callout-emphasis strong {
-    color: var(--primary-color);
-}
-
 .booking-time-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -825,9 +813,6 @@ li strong {
     .booking-about-callout {
         padding: 16px 16px;
         font-size: 0.92rem;
-    }
-    .booking-about-callout .callout-emphasis {
-        font-size: 0.95rem;
     }
     .booking-time-card {
         padding: 16px 14px;
@@ -1170,9 +1155,6 @@ li strong {
         background: #16282e;
         border-left-color: var(--primary-color);
         color: var(--text-main);
-    }
-    .booking-about-callout .callout-emphasis {
-        border-top-color: rgba(43, 184, 234, 0.35);
     }
     .booking-about-note {
         background: #16282e;
