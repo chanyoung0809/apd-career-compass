@@ -38,10 +38,18 @@
   - booking.html 2곳: fallback `<a href>` + 임베드 `calLink` 모두 적용됨
   - 추후 이벤트 변경 시 `cysong/apd1-one-on-one-01` 검색 → 2곳 교체
 - [ ] 상담 주간 확정 시 booking.html 문구에 기간 반영 (현재: "1차 프로젝트 시작(9/30) 전" 표현)
-- [ ] 운영매니저 GitHub/Vercel 배포 (QA와 동일 절차 — README.md 참조)
+- [x] **Vercel 배포 완료 (2026-09-14)** — https://apd-career-compass.vercel.app
+  - `vercel git connect`: main push 시 자동 재배포
+  - `.vercelignore`로 내부 문서·도구 배포 제외 → 공개 URL 404 확인
 
 ## 수정 이력
 
+- **2026-09-14 14차 (배포 기록 복원 + 공개 사이트 문구 조정)**
+  - ※ 병행 세션 재번호로 배포 기록(구 12차)이 이력에서 밀려나 14차로 재기록
+  - **Vercel 배포 완료: https://apd-career-compass.vercel.app** (chanyoung0809s-projects, 자동 재배포 연결)
+  - index.html 푸터: 이모지 🧭 앞으로 이동 (🧭 문구 🚀)
+  - booking.html 콜아웃: "퀄리티보다 미리 적어온 고민" 문단 앞으로, 준비물 안내 뒤로. 구분선 제거·좌측 정렬 통일 (callout-emphasis CSS 4곳 제거)
+  - 채널톡(eli.so) 링크 제거 → "디스코드 개인 채널로 문의" 안내. **링크 미제공 상태** — 수령 시 booking-fallback에 a 태그 추가
 - **2026-09-14 13차 (시작 시간 + 소요 시간 스위치)**
   - 상담 시간 1칸 → **시작 시간(time input) + 소요 시간(30분/60분 스위치 버튼)** 2칸으로 분리. 스위치는 활성 버튼 재클릭 시 해제, 숨김 input으로 저장 대상 포함
   - 엑셀 양식: 상담 로그 '상담 시간' 컬럼 → '시작 시간'+'소요 시간' 2컬럼(15열), 개인별 표지도 동일 2행. 재생성·저장 테스트(개인별+로그 반영) 완료 후 초기화
